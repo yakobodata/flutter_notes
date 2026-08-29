@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "236253066033",
+    "project_id": "notes-e779e",
+    "storage_bucket": "notes-e779e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:236253066033:android:f655505ba41c35cdb43610",
+        "android_client_info": {
+          "package_name": "com.example.vativanotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3_Pm6skz_H-ucAa2RIDN639ou4eiTaBg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
