@@ -1,19 +1,17 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vativanotes/firebase_options.dart';
 
-class LoginView extends StatefulWidget {
+class RegisterView extends StatefulWidget {
   const new({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-
-class _LoginViewState extends State<LoginView> {
-      //final keyword I promise I will give this variable a value later… before anyone tries to use it.
+class _RegisterViewState extends State<RegisterView> {
+    //final keyword I promise I will give this variable a value later… before anyone tries to use it.
   //final means:“I will give this variable a value only once… and after that, nobody can change it.”
 
   late final TextEditingController  _email;
@@ -47,7 +45,7 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       // AppBar is the heading
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Register'),
       ),
       // We Wrap our Body in the center
       //  We Use Flutter Builder to do a future before
@@ -88,26 +86,24 @@ class _LoginViewState extends State<LoginView> {
                                   
                                   final email = _email.text;
                                   final password = _password.text;
-                                  try {
-                                    final UserCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                                  try{
+                                    final UserCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                                     email: email, 
                                     password: password);
                                     print(UserCredential);
-                                  }
-                                  //on is like saying
-                                  //“Only if the problem is this special kind of problem… then do this!”  
-                                  //It’s a way to pick exactly which kind of “uh-oh” you want to catch.
-                                  on FirebaseAuthException catch(e){
-                                      if(e.code == 'user-not-found'){
-                                        print("User not found");
-                                      }
-                                      else if(e.code == 'wrong-password'){
-                                        print("Wrong Password");
-                                      }
+                                  }on FirebaseAuthException catch(e){
+                                    if (e.code == 'weak-password'){
+                                      print('Weak password');
+                                    }
+                                    else if (e.code == 'email-already-in-use'){
+                                      print('Email already in use');
+                                    }
+                                    else if (e.code == 'invalid-email'){
+                                      print('Invalid email');
+                                    }
                                   }
                                   
-                                  
-                                }, child: const Text('Login')),
+                                }, child: const Text('Register')),
                               ],
                             );
               default:
@@ -118,6 +114,4 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
-
-  
 }
