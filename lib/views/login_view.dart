@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vativanotes/firebase_options.dart';
-
+import 'dart:developer' as devtools show log;
 class LoginView extends StatefulWidget {
   const new({super.key});
 
@@ -77,17 +77,21 @@ class _LoginViewState extends State<LoginView> {
                                       final UserCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                                       email: email, 
                                       password: password);
-                                      print(UserCredential);
+                                      // print(UserCredential);
+                                      devtools.log(UserCredential.toString());
+                                      Navigator.of(context).pushNamedAndRemoveUntil('/notes/', (route) => false,);
                                     }
                                     //on is like saying
                                     //“Only if the problem is this special kind of problem… then do this!”  
                                     //It’s a way to pick exactly which kind of “uh-oh” you want to catch.
                                     on FirebaseAuthException catch(e){
                                         if(e.code == 'user-not-found'){
-                                          print("User not found");
+                                          // print("User not found");
+                                          devtools.log(e.code.toString());
                                         }
                                         else if(e.code == 'wrong-password'){
-                                          print("Wrong Password");
+                                          // print("Wrong Password");
+                                          devtools.log(e.code.toString());
                                         }
                                     }
                                     
