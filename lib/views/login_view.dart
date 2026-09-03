@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:vativanotes/constants/routes.dart';
 import 'package:vativanotes/firebase_options.dart';
 import 'dart:developer' as devtools show log;
 class LoginView extends StatefulWidget {
@@ -85,13 +86,20 @@ class _LoginViewState extends State<LoginView> {
                                     //“Only if the problem is this special kind of problem… then do this!”  
                                     //It’s a way to pick exactly which kind of “uh-oh” you want to catch.
                                     on FirebaseAuthException catch(e){
-                                        if(e.code == 'user-not-found'){
-                                          // print("User not found");
-                                          devtools.log(e.code.toString());
+                                        print(e.code);
+                                        if(e.code == 'invalid-credential'){
+                                          await showErrorDialog(
+                                            context, 
+                                            'User not found'
+                                            );
                                         }
                                         else if(e.code == 'wrong-password'){
                                           // print("Wrong Password");
-                                          devtools.log(e.code.toString());
+                                          // devtools.log(e.code.toString());
+                                          await showErrorDialog(
+                                            context, 
+                                            'Wrong Password'
+                                            );
                                         }
                                     }
                                     
@@ -99,7 +107,7 @@ class _LoginViewState extends State<LoginView> {
                                   }, child: const Text('Login')),
                                   TextButton(onPressed: (){
                                     Navigator.of(context).pushNamedAndRemoveUntil(
-                                      '/register/'
+                                      registerRoute
                                     ,(route) => false,);
                                   }, child: const Text('Not registered yet? Register here:'),)
                                 ],
@@ -107,5 +115,26 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  
+Future<void> showErrorDialog(
+  BuildContext context,
+  String text,
+  )  {
+    return showDialog(
+      context: context,
+      builder: (context){
+      return AlertDialog(
+        title: const Text('An error occured'),
+        content: Text(text),
+        actions:[
+          TextButton(onPressed: (){
+            Navigator.of(context).pop();
+            },
+            child: const Text('OK')),
+        ]
+      );
+    });
+  }
+
+
 }
+

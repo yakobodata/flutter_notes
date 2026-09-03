@@ -1,6 +1,7 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
+import "package:vativanotes/constants/routes.dart";
 import "package:vativanotes/firebase_options.dart";
 import "package:vativanotes/views/login_view.dart";
 import "package:vativanotes/views/register_view.dart";
@@ -18,9 +19,9 @@ void main() {
       primarySwatch: Colors.blue),
       home: const HomePage(),
       routes: {
-        '/login/': (context) => const LoginView(),
-        '/register/': (context) => const RegisterView(),
-        '/notes/': (context) => const NotesView(),
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        notesRoute: (context) => const NotesView(),
       },
     ),
   );
@@ -46,7 +47,7 @@ class HomePage extends StatelessWidget {
                 if (shouldLogout){
                   await FirebaseAuth.instance.signOut();
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/login/',(_) => false,
+                    loginRoute,(_) => false,
                     );
                 }
               }
@@ -134,6 +135,8 @@ class _NotesViewState extends State<NotesView> {
   }
 }
 
+
+
 Future<bool> showLogOutDialog(BuildContext context){
   return showDialog<bool>(context: context,builder: (context){
     return AlertDialog(
@@ -147,3 +150,5 @@ Future<bool> showLogOutDialog(BuildContext context){
   },
   ).then((value) => value ?? false);
 }
+
+
