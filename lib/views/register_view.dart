@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vativanotes/constants/routes.dart';
 import 'package:vativanotes/firebase_options.dart';
+import 'package:vativanotes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const new({super.key});
@@ -77,17 +78,28 @@ class _RegisterViewState extends State<RegisterView> {
                                         final UserCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                                         email: email, 
                                         password: password);
-                                        print(UserCredential);
+                                        // print(UserCredential);
+                                        final user = FirebaseAuth.instance.currentUser;
+                                        await user?.sendEmailVerification(); 
+                                        Navigator.of(context).pushNamed(VerifyEmailRoute);
                                       }on FirebaseAuthException catch(e){
                                         if (e.code == 'weak-password'){
-                                          print('Weak password');
+                                          await showErrorDialog(context, 'Weak password',);
                                         }
                                         else if (e.code == 'email-already-in-use'){
-                                          print('Email already in use');
+                                          await showErrorDialog(context, 'Email already in use',);
                                         }
                                         else if (e.code == 'invalid-email'){
-                                          print('Invalid email');
+                                          await showErrorDialog(context, 'Invalid email');
                                         }
+                                        else {
+                                          await showErrorDialog(
+                                            context,
+                                            'Error ${e.code}',);
+                                        }
+                                      } catch (e){
+                                        // Catch any other exception even if its not in Firebase
+                                        await showErrorDialog(context, e.toString());
                                       }
                                       
                                     }, 
