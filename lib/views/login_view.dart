@@ -81,35 +81,42 @@ class _LoginViewState extends State<LoginView> {
                                       email: email, 
                                       password: password);
                                       // print(UserCredential);
-                                      devtools.log(UserCredential.toString());
-                                      Navigator.of(context).pushNamedAndRemoveUntil('/notes/', (route) => false,);
+                                      // devtools.log(UserCredential.toString());
+                                      final user = FirebaseAuth.instance.currentUser;
+                                      if (user != null) {
+                                        // User is logged in
+                                        Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false,);
+                                      } else {
+                                        Navigator.of(context).pushNamedAndRemoveUntil(VerifyEmailRoute, (route) => false,);
+                                      }
+                                      
                                     }
                                     //on is like saying
                                     //“Only if the problem is this special kind of problem… then do this!”  
                                     //It’s a way to pick exactly which kind of “uh-oh” you want to catch.
-                                    on FirebaseAuthException catch(e){
-                                        print(e.code);
-                                        if(e.code == 'invalid-credential'){
-                                          await showErrorDialog(
-                                            context, 
-                                            'User not found'
-                                            );
-                                        }
-                                        else if(e.code == 'wrong-password'){
-                                          // print("Wrong Password");
-                                          // devtools.log(e.code.toString());
-                                          await showErrorDialog(
-                                            context, 
-                                            'Wrong Password'
-                                            );
-                                        }
-                                        else{
-                                          await showErrorDialog(
-                                            context,
-                                            'Error: ${e.code}'
-                                          );
-                                        }
-                                    } 
+                                    // on FirebaseAuthException catch(e){
+                                    //     print(e.code);
+                                    //     if(e.code == 'invalid-credential'){
+                                    //       await showErrorDialog(
+                                    //         context, 
+                                    //         'User not found'
+                                    //         );
+                                    //     }
+                                    //     else if(e.code == 'wrong-password'){
+                                    //       // print("Wrong Password");
+                                    //       // devtools.log(e.code.toString());
+                                    //       await showErrorDialog(
+                                    //         context, 
+                                    //         'Wrong Password'
+                                    //         );
+                                    //     }
+                                    //     else{
+                                    //       await showErrorDialog(
+                                    //         context,
+                                    //         'Error: ${e.code}'
+                                    //       );
+                                    //     }
+                                    // } 
                                     //Any other exception
                                     catch (e){
                                       await showErrorDialog(
