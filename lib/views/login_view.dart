@@ -1,9 +1,10 @@
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:vativanotes/constants/routes.dart';
-import 'package:vativanotes/firebase_options.dart';
+import 'package:vativanotes/services/auth/auth_exceptions.dart';
+import 'package:vativanotes/services/auth/auth_service.dart';
+
 import 'dart:developer' as devtools show log;
 
 import 'package:vativanotes/utilities/show_error_dialog.dart';
@@ -70,45 +71,67 @@ class _LoginViewState extends State<LoginView> {
                               
                                     ),
                                   ),
-                                  TextButton(onPressed:  ()async{
+                                  TextButton(onPressed:  () async{
                                     //So we have to get the TextField variables from the TextField Buttons
                                     //but we have no access to them so we must use a text editing controller
                                     
                                     final email = _email.text;
                                     final password = _password.text;
                                     try {
-                                      final UserCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                                      AuthService.firebase().logIn(
+                                      email: email, 
+                                      password: password,
+                                      );
+                                      final user = await  AuthService.firebase().logIn(
+                                      // final UserCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                                       email: email, 
                                       password: password);
                                       // print(UserCredential);
                                       // devtools.log(UserCredential.toString());
-                                      final user = FirebaseAuth.instance.currentUser;
-                                      if (user != null) {
+                                      // final user = FirebaseAuth.instance.currentUser;
+                                      if (user.isEmailVerified) {
                                         // User is logged in
                                         Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false,);
                                       } else {
                                         Navigator.of(context).pushNamedAndRemoveUntil(VerifyEmailRoute, (route) => false,);
                                       }
-                                      
                                     }
                                     //on is like saying
                                     //“Only if the problem is this special kind of problem… then do this!”  
                                     //It’s a way to pick exactly which kind of “uh-oh” you want to catch.
+                                    on UserNotFoundAuthException{
+                                      await showErrorDialog(
+                                            context, 
+                                            'User not found'
+                                            );
+                                    }
+                                    on WrongPasswordAuthException{
+                                      await showErrorDialog(
+                                            context, 
+                                            'Wrong Password'
+                                            );
+                                    }
+                                    on GenericAuthException{
+                                      await showErrorDialog(
+                                        context,
+                                        'Authentication error',
+                                      );
+                                    }
                                     // on FirebaseAuthException catch(e){
                                     //     print(e.code);
                                     //     if(e.code == 'invalid-credential'){
-                                    //       await showErrorDialog(
-                                    //         context, 
-                                    //         'User not found'
-                                    //         );
+                                    //       // await showErrorDialog(
+                                    //       //   context, 
+                                    //       //   'User not found'
+                                    //       //   );
                                     //     }
                                     //     else if(e.code == 'wrong-password'){
                                     //       // print("Wrong Password");
                                     //       // devtools.log(e.code.toString());
-                                    //       await showErrorDialog(
-                                    //         context, 
-                                    //         'Wrong Password'
-                                    //         );
+                                    //       // await showErrorDialog(
+                                    //       //   context, 
+                                    //       //   'Wrong Password'
+                                    //       //   );
                                     //     }
                                     //     else{
                                     //       await showErrorDialog(

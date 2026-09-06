@@ -2,8 +2,11 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
 import "package:vativanotes/constants/routes.dart";
+import "package:vativanotes/enums/menu_action.dart";
 import "package:vativanotes/firebase_options.dart";
+import "package:vativanotes/services/auth/auth_service.dart";
 import "package:vativanotes/views/login_view.dart";
+import "package:vativanotes/views/notes_view.dart";
 import "package:vativanotes/views/register_view.dart";
 import "package:vativanotes/views/verify_email_view.dart";
 import 'dart:developer' as devtools show log;
@@ -34,43 +37,45 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // #the Scaffold is the owner of the white content here
-    return Scaffold(
-      // AppBar is the heading
-      appBar: AppBar(
-        title: const Text('Home'),
-        actions: [
-          PopupMenuButton<MenuAction>(
-            onSelected: (value) async {
-              switch (value){
-                case MenuAction.logout:
-                final shouldLogout = await showLogOutDialog(context);
-                // devtools.log(shouldLogout.toString());
-                if (shouldLogout){
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    loginRoute,(_) => false,
-                    );
-                }
-              }
-            },
-            itemBuilder: (context){
-              return const [
-                PopupMenuItem<MenuAction>(
-                value: MenuAction.logout,
-                child: Text('Log out'),
-                )
-              ];        
-            },)
-        ],
-      ),
+    // return Scaffold(
+    //   // AppBar is the heading
+    //   appBar: AppBar(
+    //     title: const Text('Home'),
+    //     actions: [
+    //       PopupMenuButton<MenuAction>(
+    //         onSelected: (value) async {
+    //           switch (value){
+    //             case MenuAction.logout:
+    //             final shouldLogout = await showLogOutDialog(context);
+    //             // devtools.log(shouldLogout.toString());
+    //             if (shouldLogout){
+    //               await FirebaseAuth.instance.signOut();
+    //               Navigator.of(context).pushNamedAndRemoveUntil(
+    //                 loginRoute,(_) => false,
+    //                 );
+    //             }
+    //           }
+    //         },
+    //         itemBuilder: (context){
+    //           return const [
+    //             PopupMenuItem<MenuAction>(
+    //             value: MenuAction.logout,
+    //             child: Text('Log out'),
+    //             )
+    //           ];        
+    //         },)
+    //     ],
+    //   ),
       // We Wrap our Body in the center
       //  We Use Flutter Builder to do a future before
       // So before we build a column , we are going to build a firebase initialization
       // because we dnot want to keep on initalizing a firbase
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-                options: DefaultFirebaseOptions.currentPlatform,
-                ),
+      return FutureBuilder(
+      // body: FutureBuilder(
+        // future: Firebase.initializeApp(
+        //         options: DefaultFirebaseOptions.currentPlatform,
+        //         ),
+        future: AuthService.firebase().initialize(),
         builder: (context, asyncSnapshot) {
           // So Connection State tells us what is the state of our Future 
           switch (asyncSnapshot.connectionState){
@@ -109,47 +114,13 @@ class HomePage extends StatelessWidget {
           }
           
         }
-      ),
-    );
-  }
-}
-
-enum MenuAction { logout }
-
-class NotesView extends StatefulWidget {
-  const new({super.key});
-
-  @override
-  State<NotesView> createState() => _NotesViewState();
-}
-
-class _NotesViewState extends State<NotesView> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your notes'),
-        
-      ),
-      body: Text("Hello World"),
-    );
+      );
   }
 }
 
 
 
-Future<bool> showLogOutDialog(BuildContext context){
-  return showDialog<bool>(context: context,builder: (context){
-    return AlertDialog(
-      title: const Text('Sign out'),
-      content: const Text('Are you sure you want to sign out'),
-      actions: [
-        TextButton(onPressed: (){Navigator.of(context).pop(false);},child: const Text('Cancel')),
-        TextButton(onPressed: (){Navigator.of(context).pop(true);},child: const Text('Log out'))
-      ],
-    );
-  },
-  ).then((value) => value ?? false);
-}
+
+
 
 
